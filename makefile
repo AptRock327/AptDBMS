@@ -1,7 +1,7 @@
 .PHONY: clean
 
 aptdbms: $(shell find src -type f -iname '*.c')
-	gcc -Iinclude -lm -o $@ $^
+	gcc -Iinclude -o $@ $^ -lm
 	
 clean:
 	rm aptdbms
