@@ -22,11 +22,13 @@ struct Database
 {
 	char columns[1000]; //effective size of around 30 (birthday paradox)
 	char* columnNames[1000];
+	char insertCommands[1000][256];
 	char* format;
 	unsigned int recordCount;
 	Record* records;
 	BTreeNode** forest;
 	int capacity;
+	int startingRecordAmount;
 } typedef Database;
 
 /** Creates a new database.

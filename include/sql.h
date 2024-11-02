@@ -33,9 +33,9 @@ TokenListNode* tokenize(char* SQLQuery);
 /** Most likely temporary SQL token parsing function.
  * @db - pointer to database to apply query to
  * @head - pointer to head node of the token list to parse
- * Returns: none
+ * Returns: a status integer; -1 failure, 0 successful select, 1 successful insert
  * TODO: Actually use an AST for fuck's sake lol
  */
-void primitiveParse(Database* db, TokenListNode* head);
+int primitiveParse(Database* db, TokenListNode* head);
 
 #endif

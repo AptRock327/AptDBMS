@@ -7,26 +7,37 @@
 
 #include <stdio.h>
 
-#include <array.h>
-#include <list.h>
-#include <btree.h>
 #include <database.h>
-#include <sql.h>
 #include <ui.h>
 
-int main()
+int main(int argc, char** argv)
 {
-	printf("Using demo database with 'students' table...\n");
-	
 	Database db;
-	loadStudentsDatabase(&db);
+	char* dbFile;
 
-	printf("Loaded demo database successfully.\n\n");
+	//Load database. Inform the user whether it was loaded successfully. Quit on failure.
+	if(dbFile = loadDB(&db, argc, argv)) printf("Loaded database successfully.\n\n");
+	else
+	{
+		printf("Couldn't import database.\nComitting suicide.\n");
+		return -1;
+	}
+
+	//Was there a database transaction provided?
+	switch(performTransaction(&db, argc, argv))
+	{
+		case -2: //Yes and there was a failure? Inform the user and quit.
+			printf("Transaction failure.\nComitting suicide.\n");
+			return -1;
+		case 0: //Yes and it went successfully? Inform the user and quit.
+			printf("Transaction success.\nExiting program.\n");
+			return 0;
+	} //If not, continue to main loop.
 
 	while(true)
 	{
 		//Execute the main loop. Return value not zero? Quit.
-		if(mainLoop(&db)) break;
+		if(mainLoop(&db, dbFile)) break;
 	}
 
 	return 0;

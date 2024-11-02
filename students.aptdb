@@ -1,0 +1,5 @@
+INSERT VALUES (4, Chris, London, 4D) INTO students
+INSERT VALUES (18, Cookie, Easy, 2C) INTO students
+INSERT VALUES (24, Mitsubishi, White, 2A) INTO students
+INSERT VALUES (28, Pimpus, Sadelko, 2A) INTO students
+INSERT VALUES (29, Goro, Akechi, 2D) INTO students

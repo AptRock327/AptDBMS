@@ -10,6 +10,14 @@ struct IntListNode
 	struct IntListNode* next;
 } typedef IntListNode;
 
+// Structure representing the node of a string linked list. Defined as a type.
+struct StringListNode
+{
+	char* value;
+	struct StringListNode* next;
+	
+} typedef StringListNode;
+
 /** Displays an integer linked list.
  * @head - pointers to head node of the list
  * Returns: none

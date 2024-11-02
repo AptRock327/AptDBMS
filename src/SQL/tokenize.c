@@ -91,6 +91,7 @@ TokenListNode* tokenize(char* SQLQuery)
 			}
 			char* str = malloc(length+1);
 			strncpy(str, query-length, length);
+			str[length] = 0;
 			addNewTokenWithValue(0, str, &current);
 			continue;
 		}

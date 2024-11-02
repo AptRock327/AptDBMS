@@ -33,7 +33,7 @@ void displayTableTitle(Database db, const char* tableName, int columnDisplayCoun
 
 }
 
-void handleSelect(Database db, TokenListNode* head)
+int handleSelect(Database db, TokenListNode* head)
 {
 	bool displayAll = false;
 	int columnDisplayCount = 0;
@@ -41,12 +41,12 @@ void handleSelect(Database db, TokenListNode* head)
 	char** columns;	
 
 	if(head->next) current = head->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}	
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}	
 
 	if(current->value.ID == 10) displayAll = true;
 	else
 	{
-		if(current->value.ID != 7) {printf("SYNTAX ERROR: '(' or '*' SYMBOL EXPECTED\n"); return;}
+		if(current->value.ID != 7) {printf("SYNTAX ERROR: '(' or '*' SYMBOL EXPECTED\n"); return -1;}
 		columns = malloc(sizeof(char*) * 30); //effective size
 		current = current->next;
 	
@@ -55,23 +55,23 @@ void handleSelect(Database db, TokenListNode* head)
 			if(current->value.ID == 9)
 			{
 				if(current->next) current = current->next;
-				else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+				else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 				continue;
 			}
 			columns[columnDisplayCount] = malloc(100);
 			strcpy(columns[columnDisplayCount], current->value.value);	
 			columnDisplayCount++;	
 			if(current->next) current = current->next;
-			else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+			else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 		}
 	}
 
 	if(current->next) current = current->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
-	if(current->value.ID != 2) {printf("SYNTAX ERROR: 'FROM' KEYWORD EXPECTED\n"); return;}
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
+	if(current->value.ID != 2) {printf("SYNTAX ERROR: 'FROM' KEYWORD EXPECTED\n"); return -1;}
 	
 	if(current->next) current = current->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 	//TODO: Handle multiple tables for one database.
 	const char* tableName = current->value.value;
 
@@ -133,30 +133,30 @@ void handleSelect(Database db, TokenListNode* head)
 			putchar('\n');
 		}
 
-		return;
+		return 0;
 	}
 	
-	if(current->value.ID != 3) {printf("SYNTAX ERROR: 'WHERE' KEYWORD EXPECTED\n"); return;}
+	if(current->value.ID != 3) {printf("SYNTAX ERROR: 'WHERE' KEYWORD EXPECTED\n"); return -1;}
 	
 	if(current->next) current = current->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
-	if(current->value.ID != 0) {printf("UNEXPECTED EXPRESSION\n"); return;}
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
+	if(current->value.ID != 0) {printf("UNEXPECTED EXPRESSION\n"); return -1;}
 	const char* column = current->value.value;
 	
 	if(current->next) current = current->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 	
-	if(current->value.ID != 12) {printf("SYNTAX ERROR: '=' SYMBOL EXPECTED\n"); return;}
+	if(current->value.ID != 12) {printf("SYNTAX ERROR: '=' SYMBOL EXPECTED\n"); return -1;}
 	
 	if(current->next) current = current->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 
 	IntListNode* searchResults;
 	
 	if(current->value.ID == 11)
 	{
 		if(current->next) current = current->next;
-		else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+		else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 
 		searchResults = searchStrInColumn(db, 
 			decodeColumnName(db, column), current->value.value);
@@ -219,22 +219,24 @@ void handleSelect(Database db, TokenListNode* head)
 			putchar('=');
 		putchar('\n');
 	}
+
+	return 0;
 }
 
-void handleInsert(Database* db, TokenListNode* head)
+int handleInsert(Database* db, TokenListNode* head)
 {	
 	TokenListNode* current;
 	unsigned int columnDisplayCount = 0;
 	char** columns;
 
 	if(head->next) current = head->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 
-	if(current->value.ID != 6) {printf("SYNTAX ERROR: 'VALUES' KEYWORD EXPECTED\n"); return;}
+	if(current->value.ID != 6) {printf("SYNTAX ERROR: 'VALUES' KEYWORD EXPECTED\n"); return -1;}
 	if(current->next) current = current->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 
-	if(current->value.ID != 7) {printf("SYNTAX ERROR: '(' or '*' SYMBOL EXPECTED\n"); return;}
+	if(current->value.ID != 7) {printf("SYNTAX ERROR: '(' or '*' SYMBOL EXPECTED\n"); return -1;}
 	columns = malloc(sizeof(char*) * strlen(db->format));
 	current = current->next;
 	
@@ -243,24 +245,24 @@ void handleInsert(Database* db, TokenListNode* head)
 		if(current->value.ID == 9)
 		{
 			if(current->next) current = current->next;
-			else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+			else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 			continue;
 		}
 		columns[columnDisplayCount] = malloc(100);
 		strcpy(columns[columnDisplayCount], current->value.value);	
 		columnDisplayCount++;	
 		if(current->next) current = current->next;
-		else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+		else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 	}
 
 	if(current->next) current = current->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 
-	if(current->value.ID != 5) {printf("SYNTAX ERROR: 'INTO' KEYWORD EXPECTED\n"); return;}
+	if(current->value.ID != 5) {printf("SYNTAX ERROR: 'INTO' KEYWORD EXPECTED\n"); return -1;}
 	if(current->next) current = current->next;
-	else {printf("UNEXPECTED QUERY TERMINATION\n"); return;}
+	else {printf("UNEXPECTED QUERY TERMINATION\n"); return -1;}
 
-	if(current->value.ID != 0) {printf("SYNTAX ERROR: TABLE NAME NOT PROVIDED\n"); return;}
+	if(current->value.ID != 0) {printf("SYNTAX ERROR: TABLE NAME NOT PROVIDED\n"); return -1;}
 
 	Record r = newRecord(strlen(db->format));
 	for(int i = 0; i < strlen(db->format); i++)
@@ -280,9 +282,11 @@ void handleInsert(Database* db, TokenListNode* head)
 		
 	}
 	addRecordToDB(db, r);
+
+	return 0;
 }
 
-void primitiveParse(Database* db, TokenListNode* head)
+int primitiveParse(Database* db, TokenListNode* head)
 {
 	TokenListNode* current = head;
 
@@ -292,24 +296,33 @@ void primitiveParse(Database* db, TokenListNode* head)
 	}
 
 	clock_t t;
+	int status;
 
 	switch(head->value.ID)
 	{
 		case 1:
 			putchar('\n');
 			t = clock();
-			handleSelect(*db, head);
+			status = handleSelect(*db, head);
 			t = clock() - t;
-			printf("\nSELECTed successfully in %f seconds.\n", ((double)t)/CLOCKS_PER_SEC);
+			if(status) printf("SELECTing failed\n"); 
+			else printf("\nSELECTed successfully in %f seconds.\n", ((double)t)/CLOCKS_PER_SEC);
 			break;
 		case 4:
 			t = clock();
-			handleInsert(db, head);
+			status = handleInsert(db, head);
 			t = clock() - t;
-			printf("INSERTed successfully in %f seconds.\n", ((double)t)/CLOCKS_PER_SEC);
+			if(status) printf("INSERTing failed\n");
+			else
+			{
+				printf("INSERTed successfully in %f seconds.\n", ((double)t)/CLOCKS_PER_SEC);
+				return 1;
+			}
 			break;
 		default:
 			printf("UNKNOWN COMMAND\n");
 			break;
 	}
+
+	return status;
 }
